@@ -14,6 +14,7 @@ from openai import OpenAI
 from agent import BASE_DIR, SYSTEM_PROMPT, load_memory, run_agent, save_memory
 from computer_tools import COMPUTER_TOOL_DEFINITIONS
 from tools import TOOL_DEFINITIONS
+from research_runner import run_research_task
 
 
 load_dotenv(BASE_DIR / ".env")
@@ -89,8 +90,10 @@ class AgentWorkbench(tk.Tk):
         notebook.pack(fill="both", expand=True)
 
         chat_frame = ttk.Frame(notebook, style="Main.TFrame")
+        research_frame = ttk.Frame(notebook, style="Main.TFrame")
         log_frame = ttk.Frame(notebook, style="Main.TFrame")
         notebook.add(chat_frame, text="  对话  ")
+        notebook.add(research_frame, text="  独立研究任务  ")
         notebook.add(log_frame, text="  执行记录  ")
 
         self.chat = scrolledtext.ScrolledText(
@@ -127,6 +130,39 @@ class AgentWorkbench(tk.Tk):
         self.input_box.bind("<Control-Return>", lambda _event: self._send())
         self.send_button = ttk.Button(input_row, text="发送\nCtrl+Enter", command=self._send)
         self.send_button.pack(side="right", fill="y")
+
+        ttk.Label(
+            research_frame,
+            text="输入最终目标，智能体将自动规划、搜索、阅读多个网页并保存报告。",
+            font=("Microsoft YaHei UI", 11, "bold"),
+        ).pack(anchor="w", pady=(8, 10))
+        self.research_input = tk.Text(
+            research_frame,
+            height=5,
+            wrap="word",
+            bg="#1b2230",
+            fg="white",
+            insertbackground="white",
+            font=("Microsoft YaHei UI", 11),
+            relief="flat",
+            padx=10,
+            pady=8,
+        )
+        self.research_input.pack(fill="x", pady=(0, 10))
+        self.research_button = ttk.Button(research_frame, text="开始独立研究", command=self._start_research)
+        self.research_button.pack(anchor="e", pady=(0, 10))
+        self.research_output = scrolledtext.ScrolledText(
+            research_frame,
+            wrap="word",
+            state="disabled",
+            bg="#111722",
+            fg="#eef2ff",
+            font=("Microsoft YaHei UI", 10),
+            padx=14,
+            pady=14,
+            relief="flat",
+        )
+        self.research_output.pack(fill="both", expand=True)
 
         self.log = scrolledtext.ScrolledText(
             log_frame,
@@ -224,6 +260,58 @@ class AgentWorkbench(tk.Tk):
         self.status.set("执行失败" if failed else "任务完成")
         self.send_button.configure(state="normal")
         self.input_box.focus_set()
+
+    def _set_research_output(self, text: str, append: bool = False) -> None:
+        self.research_output.configure(state="normal")
+        if not append:
+            self.research_output.delete("1.0", "end")
+        self.research_output.insert("end", text + "\n")
+        self.research_output.configure(state="disabled")
+        self.research_output.see("end")
+
+    def _start_research(self) -> None:
+        objective = self.research_input.get("1.0", "end").strip()
+        key = self.api_key.get().strip()
+        if not objective:
+            messagebox.showwarning("缺少目标", "请先输入一个具体研究目标。")
+            return
+        if not key or key.startswith("在这里"):
+            messagebox.showwarning("缺少 API Key", "请先在左侧输入 DeepSeek API Key。")
+            return
+        self.research_button.configure(state="disabled")
+        self.status.set("正在制定研究计划……")
+        self._set_research_output("任务已启动，请等待智能体制定计划……")
+        threading.Thread(target=self._run_research, args=(key, objective), daemon=True).start()
+
+    def _run_research(self, key: str, objective: str) -> None:
+        def show_plan(plan: str) -> None:
+            self.after(0, self._set_research_output, f"执行计划：\n{plan}\n", False)
+            self.after(0, self.status.set, "正在搜索和阅读网页……")
+
+        def tool_event(name: str, arguments: dict[str, Any], result: dict[str, Any]) -> None:
+            summary = result.get("error") or result.get("title") or result.get("filename") or "完成"
+            self.after(0, self._set_research_output, f"[{name}] {summary}", True)
+            self.after(0, self._append_log, f"研究工具：{name}\n参数：{arguments}\n结果：{result}")
+
+        try:
+            client = OpenAI(api_key=key, base_url="https://api.deepseek.com")
+            answer, report_path = run_research_task(
+                client,
+                self.model.get(),
+                objective,
+                on_plan=show_plan,
+                on_tool_event=tool_event,
+            )
+            self.after(0, self._finish_research, answer, report_path, False)
+        except Exception as exc:
+            self.after(0, self._finish_research, f"研究失败：{exc}", "", True)
+
+    def _finish_research(self, answer: str, report_path: str, failed: bool) -> None:
+        self._set_research_output(f"\n最终结果：\n{answer}", True)
+        if report_path:
+            self._set_research_output(f"\n报告已保存：{report_path}", True)
+        self.status.set("研究失败" if failed else "独立研究完成")
+        self.research_button.configure(state="normal")
 
 
 if __name__ == "__main__":
