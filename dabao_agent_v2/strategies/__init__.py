@@ -1,0 +1,2 @@
+"""Extensible stock strategies."""
+
