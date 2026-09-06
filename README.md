@@ -12,6 +12,7 @@
 - 不会把 `.env` 和 API Key 上传到 GitHub
 - 可视化聊天、模型选择、工具开关、执行记录和笔记管理
 - 可选择控制 Windows：打开应用/网页、搜索、输入文字、按键、点击和截图
+- 独立研究模式：规划任务、搜索网页、阅读多个来源并保存 Markdown 报告
 
 ## Windows 安装步骤
 
@@ -63,6 +64,16 @@ python desktop_workbench.py
 
 电脑控制只会在运行本项目的那台 Windows 电脑上生效。执行时请观察屏幕；如需紧急中止，把鼠标快速移到屏幕左上角。程序不提供任意命令行执行能力，只能使用代码中明确允许的工具。
 
+## 独立完成资料研究
+
+打开“独立研究任务”标签页，只输入最终目标，例如：
+
+```text
+研究目前主流 AI Agent 框架，比较它们的用途、学习难度和适合人群，生成中文报告。
+```
+
+智能体会制定计划、使用 Edge 搜索、读取多个网页并把最终报告保存到 `reports` 文件夹。研究过程中不会登录账号、提交表单、购买或发送消息。
+
 ## 启动命令行版
 
 ```powershell
@@ -96,6 +107,8 @@ deepseek-agent/
 ├─ start.bat             # 双击启动脚本
 ├─ workbench.py          # 旧版 Streamlit 工作台（备用）
 ├─ computer_tools.py     # 受限制的 Windows 鼠标、键盘和应用工具
+├─ browser_research_tools.py # Edge 搜索、网页正文提取和报告保存
+├─ research_runner.py    # 独立任务规划、执行与失败停止
 ├─ tools.py              # 智能体可调用的工具
 ├─ tests/test_tools.py   # 工具安全性测试
 ├─ notes/                # 智能体创建的笔记
