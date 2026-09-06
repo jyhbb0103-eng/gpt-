@@ -204,7 +204,7 @@ Python 负责行情、指标、评分、排序、支撑和压力。DeepSeek 只�
 离线关键模块测试：
 
 ```powershell
-pytest -q
+python -m pytest -q
 ```
 
 测试包含：配置加载、Skill 读取、Skill 匹配、SQLite 初始化、ContextBuilder、股票评分、停止任务、DeepSeek Mock、数据接口失败边界和 Excel 清理。
