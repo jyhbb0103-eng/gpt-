@@ -1,6 +1,6 @@
 # DeepSeek 智能体（新手版）
 
-一个带可视化工作台的 Python 智能体。它由 DeepSeek 驱动，会根据任务自行决定是否调用工具，并把最近的对话保存在本地。
+一个带 Windows 原生可视化工作台的 Python 智能体。它由 DeepSeek 驱动，会根据任务自行决定是否调用工具，并把最近的对话保存在本地。
 
 ## 已有能力
 
@@ -44,11 +44,15 @@ DEEPSEEK_MODEL=deepseek-v4-flash
 
 ## 启动可视化工作台（推荐）
 
-```powershell
-streamlit run workbench.py
+安装完成后，直接双击项目中的 `start.bat`。
+
+也可以在已激活虚拟环境的 CMD 中运行：
+
+```cmd
+python desktop_workbench.py
 ```
 
-浏览器会自动打开工作台。你也可以直接在左侧输入 API Key，不需要修改 `.env`。
+这是 Windows 原生窗口，不启动网页服务器，也不需要浏览器。你可以直接在左侧输入 API Key，不需要修改 `.env`。
 
 需要操作电脑时，在左侧开启“允许控制本机”。例如：
 
@@ -88,7 +92,9 @@ python -m unittest discover -s tests -v
 ```text
 deepseek-agent/
 ├─ agent.py              # 对话循环、DeepSeek 请求、工具调度和记忆
-├─ workbench.py          # Streamlit 可视化工作台
+├─ desktop_workbench.py  # Windows 原生可视化工作台
+├─ start.bat             # 双击启动脚本
+├─ workbench.py          # 旧版 Streamlit 工作台（备用）
 ├─ computer_tools.py     # 受限制的 Windows 鼠标、键盘和应用工具
 ├─ tools.py              # 智能体可调用的工具
 ├─ tests/test_tools.py   # 工具安全性测试
