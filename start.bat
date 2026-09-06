@@ -10,7 +10,7 @@ if not exist ".venv\Scripts\python.exe" (
 )
 
 call ".venv\Scripts\activate.bat"
-python -c "import openai, dotenv, pyautogui, pyperclip" >nul 2>&1
+python -c "import openai, dotenv, pyautogui, pyperclip, playwright" >nul 2>&1
 if errorlevel 1 (
     echo 正在安装项目依赖，请稍候...
     python -m pip install -r requirements.txt
