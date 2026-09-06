@@ -8,3 +8,5 @@ notes/*.md
 !notes/.gitkeep
 screenshots/*.png
 !screenshots/.gitkeep
+reports/*.md
+!reports/.gitkeep
