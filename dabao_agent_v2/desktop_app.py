@@ -8,14 +8,13 @@ from __future__ import annotations
 
 import argparse
 import ctypes
+import http.client
 import logging
 import os
 import socket
 import subprocess
 import sys
 import time
-import urllib.error
-import urllib.request
 from pathlib import Path
 from typing import IO
 
@@ -91,14 +90,21 @@ def port_is_open(host: str = APP_HOST, port: int = APP_PORT) -> bool:
 
 
 def service_is_ready(url: str = APP_URL) -> bool:
-    """Check the real Streamlit HTTP health endpoint."""
-    health_url = f"{url}/_stcore/health"
-    request = urllib.request.Request(health_url, headers={"User-Agent": "DabaoDesktop/2.0"})
+    """Check Streamlit directly, bypassing system HTTP/SOCKS proxy settings."""
+    del url  # The desktop service always uses the fixed loopback host and port.
+    connection = http.client.HTTPConnection(APP_HOST, APP_PORT, timeout=1.0)
     try:
-        with urllib.request.urlopen(request, timeout=1.0) as response:
-            return response.status == 200 and response.read(20).strip().lower() == b"ok"
-    except (OSError, urllib.error.URLError):
+        connection.request(
+            "GET",
+            "/_stcore/health",
+            headers={"User-Agent": "DabaoDesktop/2.0", "Connection": "close"},
+        )
+        response = connection.getresponse()
+        return response.status == 200 and response.read(20).strip().lower() == b"ok"
+    except (OSError, http.client.HTTPException):
         return False
+    finally:
+        connection.close()
 
 
 def start_streamlit(project_root: Path, log_stream: IO[bytes]) -> subprocess.Popen[bytes]:
@@ -209,6 +215,10 @@ def run(self_test: bool = False) -> int:
     log_stream: IO[bytes] | None = None
     logger: logging.Logger | None = None
     try:
+        # Ensure pywebview and any inherited Python networking bypass proxies for
+        # the loopback-only Streamlit service.
+        os.environ["NO_PROXY"] = "127.0.0.1,localhost"
+        os.environ["no_proxy"] = "127.0.0.1,localhost"
         project_root = find_project_root()
         logger, log_path = configure_logging(project_root)
         logger.info("桌面启动器开始运行，项目目录：%s", project_root)
