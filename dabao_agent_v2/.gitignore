@@ -9,4 +9,5 @@ storage/uploads/*
 storage/generated/*
 storage/memory/*.db
 storage/cache/*
+logs/*.log
 !storage/**/.gitkeep
