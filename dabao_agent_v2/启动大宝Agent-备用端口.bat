@@ -35,7 +35,7 @@ echo.
 echo 请保持本窗口打开。关闭本窗口将停止 Dabao Agent。
 echo.
 
-start "" /b cmd /c "timeout /t 3 /nobreak >nul && start http://localhost:8502"
+start "" /b powershell.exe -NoProfile -WindowStyle Hidden -Command "Start-Sleep -Seconds 3; Start-Process 'http://localhost:8502'"
 
 ".venv\Scripts\python.exe" -m streamlit run app.py --server.address localhost --server.port 8502 --server.headless true --server.fileWatcherType none --browser.gatherUsageStats false
 
