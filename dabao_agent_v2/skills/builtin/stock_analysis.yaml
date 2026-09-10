@@ -1,0 +1,9 @@
+name: stock_analysis
+description: 对指定沪深主板股票进行算法评分与结构化解释
+version: "1.0"
+status: tested
+triggers: [分析股票, 单股分析, 分析]
+steps: [parse_stock_code, fetch_quote, fetch_history, calculate_indicators, validate_result, generate_report]
+success_count: 0
+failure_count: 0
+

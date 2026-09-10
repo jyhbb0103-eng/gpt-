@@ -1,0 +1,9 @@
+name: strong_sector_scan
+description: 扫描并排序当前强势行业板块
+version: "1.0"
+status: tested
+triggers: [扫描强势板块, 强势板块, 板块扫描]
+steps: [fetch_sector_data, calculate_sector_score, rank_sectors]
+success_count: 0
+failure_count: 0
+
