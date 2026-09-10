@@ -100,13 +100,21 @@ DEEPSEEK_API_KEY=xxxx
 
 ### 7. 启动大宝
 
-推荐使用：
+完成首次安装后，推荐直接双击项目根目录中的桌面版：
 
-```powershell
-python -m streamlit run app.py
+```text
+大宝Agent.exe
 ```
 
-也可以双击 `start.bat`。正常启动后，浏览器会打开：
+桌面版会启动本机 Streamlit，并在独立的“大宝 Agent 2.0”窗口内加载工作台，不打开 Chrome 或 Edge。只双击一次，最多等待 30 秒。关闭桌面窗口后，本次启动的 Streamlit 子进程会自动结束。
+
+桌面启动失败时查看：
+
+```text
+logs\desktop_startup.log
+```
+
+浏览器版仍作为备用方式保留，可以双击 `启动大宝Agent.bat`。浏览器版地址：
 
 ```text
 http://localhost:8501
