@@ -1,0 +1,9 @@
+name: stock_screening
+description: 沪深主板低位放量突破与强势板块选股
+version: "1.0"
+status: tested
+triggers: [开始选股, 今日选股, 筛选股票]
+steps: [fetch_market_data, filter_main_board, find_strong_sectors, fetch_history, score_candidates, rank_candidates, generate_report]
+success_count: 0
+failure_count: 0
+

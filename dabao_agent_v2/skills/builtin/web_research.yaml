@@ -1,0 +1,9 @@
+name: web_research
+description: 通过公开网页搜索资料并整理来源、标题、摘要、时间和链接
+version: "1.0"
+status: tested
+triggers: [搜索资料, 最近新闻, 行业研究, 网页搜索]
+steps: [build_query, search_public_web, extract_results, validate_sources, generate_report]
+success_count: 0
+failure_count: 0
+

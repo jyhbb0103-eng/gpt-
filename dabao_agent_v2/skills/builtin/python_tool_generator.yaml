@@ -1,0 +1,9 @@
+name: python_tool_generator
+description: 生成经过安全检查的 Python 小工具
+version: "1.0"
+status: draft
+triggers: [Python 小工具, 写脚本, 生成 Python 工具]
+steps: [understand_requirement, generate_code, safety_check, save_code, optional_test_run]
+success_count: 0
+failure_count: 0
+

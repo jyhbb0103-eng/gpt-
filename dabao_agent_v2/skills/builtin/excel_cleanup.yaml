@@ -1,0 +1,9 @@
+name: excel_cleanup
+description: 读取并整理 Excel 或 CSV，支持去重、筛选、排序和列重命名
+version: "1.0"
+status: tested
+triggers: [整理 Excel, 整理表格, 处理 CSV, 合并表格]
+steps: [validate_file, read_table, clean_data, save_excel, report_changes]
+success_count: 0
+failure_count: 0
+
